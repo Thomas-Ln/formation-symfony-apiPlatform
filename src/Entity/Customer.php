@@ -2,12 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ApiResource(
+ *  normalizationContext={
+ *      "groups"={"customers_read"}
+ * },
+ *  subresourceOperations={
+ *      "invoices_get_subresource"={"path"="/clients/{id}/factures"}
+ * }
+ * )
+ * @ApiFilter(SearchFilter::class)
+ * @ApiFilter(OrderFilter::class)
  */
 class Customer
 {
@@ -15,42 +32,81 @@ class Customer
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read"})
+     * @Assert\NotBlank(message="cannot be empty")
+     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="cannot be empty")
+     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="cannot be empty !")
+     * @Assert\Email(message="must be a valid email adress !")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customers_read"})
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="customer")
+     * @Groups({"customers_read"})
+     * @ApiSubresource
      */
     private $invoices;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
+     * @Groups({"customers_read"})
+     * @Assert\NotBlank(message="cannot be empty !")
      */
     private $user;
 
     public function __construct()
     {
         $this->invoices = new ArrayCollection();
+    }
+
+    /**
+     * return total
+     * @Groups({"customers_read"})
+     * @return float
+     */
+    public function getTotalAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(), function ($total, $invoice) {
+            return $total + $invoice->getAmount();
+        }, 0);
+    }
+
+    /**
+     * return amount of unpaid invoices
+     * @Groups({"customers_read"})
+     * @return float
+     */
+    public function getUnpaidAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(), function ($total, $invoice) {
+            return $total + ($invoice->getStatus() === "PAID" || $invoice->getStatus() === "CANCELLED" ? 0 : $invoice->getAmount());
+        }, 0);
     }
 
     public function getId(): ?int

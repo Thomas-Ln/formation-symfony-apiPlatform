@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ApiResource
+ * @UniqueEntity("email", message="this email already exist !")
  */
 class User implements UserInterface
 {
@@ -16,11 +22,15 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="cannot be empty !")
+     * @Assert\Email(message="must be a valid email adress !")
      */
     private $email;
 
@@ -32,16 +42,24 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="cannot be empty !")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="cannot be empty !")
+     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
+     *
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
+     * @Assert\NotBlank(message="cannot be empty !")
+     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
      */
     private $lastName;
 
