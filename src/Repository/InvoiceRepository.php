@@ -19,6 +19,19 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
 
+    public function findLastChrono(User $user)
+    {
+        return $this->createQueryBuilder("i")
+                    ->select("i.chrono")
+                    ->join("i.customer", "c")
+                    ->where("c.user = :user")
+                    ->setParameter("user", $user)
+                    ->orderBy("i.chrono", "DESC")
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getSingleScalarResult();
+    }
+
     // /**
     //  * @return Invoice[] Returns an array of Invoice objects
     //  */
