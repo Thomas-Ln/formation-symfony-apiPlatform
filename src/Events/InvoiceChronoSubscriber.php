@@ -24,7 +24,7 @@ class InvoiceChronoSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['setChronoForInvoice', EventPriorities::PRE_VALIDATE];
+            KernelEvents::VIEW => ['setChronoForInvoice', EventPriorities::PRE_VALIDATE]
         ];
     }
 
