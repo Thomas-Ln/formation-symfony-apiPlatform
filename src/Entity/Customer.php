@@ -38,7 +38,7 @@ class Customer
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customers_read"})
+     * @Groups({"customers_read", "invoices_read"})
      * @Assert\NotBlank(message="cannot be empty")
      * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
      */
