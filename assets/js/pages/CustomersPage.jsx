@@ -71,6 +71,7 @@ const CustomersPage = () => {
                 placeholder="Search..."
                 onChange={handleSearch}
                 value={search}
+                autoFocus
             />
         </div>
 

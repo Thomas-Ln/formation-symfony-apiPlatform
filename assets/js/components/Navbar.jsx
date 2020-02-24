@@ -1,36 +1,52 @@
-import React from 'react'
+import React, { useContext } from "react";
+import AuthApi               from "../services/authApi";
+import { NavLink }           from "react-router-dom";
+import AuthContext           from "../contexts/AuthContext";
 
-const Navbar = (props) => {
-    return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a className="navbar-brand" href="#">SymReact</a>
-        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
 
-        <div className="collapse navbar-collapse" id="navbarColor01">
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <a className="nav-link" href="#/customers">Customers</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#/invoices">Invoices</a>
-            </li>
-          </ul>
-          <ul className="navbar-nav ml-auto">
+const Navbar = ({history}) => {
+
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    AuthApi.logout();
+    setIsAuthenticated(false);
+    history.push("/login");
+  };
+
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <NavLink className="navbar-brand" to="/">SymReact</NavLink>
+      <button  className="navbar-toggler" type="button" data-toggle="collapse" data-target="navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span  className="navbar-toggler-icon"></span>
+      </button>
+
+      <div className="collapse navbar-collapse" id="navbarColor01">
+        <ul className="navbar-nav mr-auto">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/customers">Customers</NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/invoices">Invoices</NavLink>
+          </li>
+        </ul>
+        <ul className="navbar-nav ml-auto">
+            {!isAuthenticated && <>
               <li className="nav-item">
-                <a href="#" className="nav-link btn">Sign Up</a>
+                <NavLink to="/signup" className="nav-link btn">Sign Up</NavLink>
               </li>
               <li className="nav-item mx-0">
-                  <a href="#" className="btn btn-success">Login</a>
+                  <NavLink to="/login" className="btn btn-success">Login</NavLink>
               </li>
+            </> || (
               <li className="nav-item mx-1">
-                  <a href="#" className="btn btn-danger">Logout</a>
+                  <button onClick={handleLogout} className="btn btn-danger">Logout</button>
               </li>
-          </ul>
-        </div>
-      </nav>
-    )
+            )}
+        </ul>
+      </div>
+    </nav>
+  )
   }
 
 export default Navbar;
