@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState }                       from "react";
 import { HashRouter, Switch, Route, withRouter } from "react-router-dom";
-import ReactDOM      from "react-dom";
-import Navbar        from "./components/Navbar";
-import HomePage      from "./pages/HomePage";
-import LoginPage     from "./pages/LoginPage";
-import CustomersPage from "./pages/CustomersPage";
-import InvoicesPage  from "./pages/InvoicesPage";
-import AuthApi       from "./services/authApi";
-import AuthContext   from "./contexts/AuthContext";
-import PrivateRoute  from "./components/PrivateRoute";
+import ReactDOM                                  from "react-dom";
+import Navbar                                    from "./components/Navbar";
+import HomePage                                  from "./pages/HomePage";
+import LoginPage                                 from "./pages/LoginPage";
+import RegisterPage                              from "./pages/RegisterPage";
+import CustomerPage                              from "./pages/CustomerPage";
+import CustomersPage                             from "./pages/CustomersPage";
+import InvoicePage                               from "./pages/InvoicePage";
+import InvoicesPage                              from "./pages/InvoicesPage";
+import AuthApi                                   from "./services/authApi";
+import AuthContext                               from "./contexts/AuthContext";
+import PrivateRoute                              from "./components/PrivateRoute";
 import '../css/app.css';
 
 AuthApi.setup();
@@ -23,10 +26,13 @@ const App = () => {
         <NavbarWithRouter />
         <main className="container pt-5">
           <Switch>
-            <Route        path="/login"     component={LoginPage}     />
-            <PrivateRoute path="/customers" component={CustomersPage} />
-            <PrivateRoute path="/invoices"  component={InvoicesPage}  />
-            <Route        path="/"          component={HomePage}      />
+            <Route        path="/login"         component={LoginPage}     />
+            <Route        path="/register"      component={RegisterPage}  />
+            <PrivateRoute path="/customers/:id" component={CustomerPage}  />
+            <PrivateRoute path="/customers"     component={CustomersPage} />
+            <PrivateRoute path="/invoices/:id"  component={InvoicePage}   />
+            <PrivateRoute path="/invoices"      component={InvoicesPage}  />
+            <Route        path="/"              component={HomePage}      />
           </Switch>
         </main>
       </HashRouter>

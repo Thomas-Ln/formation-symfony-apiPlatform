@@ -10,11 +10,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @UniqueEntity("email")
  * @ApiResource(
  *  normalizationContext={
  *      "groups"={"customers_read"}
@@ -39,24 +41,22 @@ class Customer
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="cannot be empty")
-     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
+     * @Assert\Length(min=3, minMessage="Firstname length must be between 3 to 255 char !", max=255, maxMessage="Firstname length must be between 3 to 255 char !")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="cannot be empty")
-     * @Assert\Length(min=3, minMessage="length must be between 3 to 255 char !", max=255, maxMessage="length must be between 3 to 255 char !")
+     * @Assert\Length(min=3, minMessage="Lastname length must be between 3 to 255 char !", max=255, maxMessage="Lastname length must be between 3 to 255 char !")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="cannot be empty !")
-     * @Assert\Email(message="must be a valid email adress !")
+     * @Assert\NotBlank(message="Email cannot be empty !")
+     * @Assert\Email(message="Not a valid email adress !")
      */
     private $email;
 
@@ -76,7 +76,7 @@ class Customer
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
      * @Groups({"customers_read"})
-     * @Assert\NotBlank(message="cannot be empty !")
+     * @Assert\NotBlank(message="customer must be bind to a user !")
      */
     private $user;
 

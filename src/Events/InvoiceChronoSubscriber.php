@@ -17,7 +17,7 @@ class InvoiceChronoSubscriber implements EventSubscriberInterface
 
     public function __construct(Security $security, InvoiceRepository $repository)
     {
-        $this->security = $security;
+        $this->security   = $security;
         $this->repository = $repository;
     }
 

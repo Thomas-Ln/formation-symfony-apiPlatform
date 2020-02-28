@@ -1,21 +1,8 @@
-/*HEADER*/
-#navbarColor01 > form > button {
-    height: 45px;
+.badge {
+    width: 5rem;
 }
 
-/*CUSTOMER_PAGE*/
-#customerList .badge {
-    width: 2.2rem;
-}
-
-#customerList td,
-#customerList th,
-#invoiceList td,
-#invoiceList th {
-    vertical-align: middle;
-}
-
-/*INVOICE_PAGE*/
-#invoiceList .badge {
-    width: 6rem;
+td,
+th {
+ vertical-align: middle;
 }
