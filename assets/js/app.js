@@ -12,6 +12,8 @@ import InvoicesPage                              from "./pages/InvoicesPage";
 import AuthApi                                   from "./services/authApi";
 import AuthContext                               from "./contexts/AuthContext";
 import PrivateRoute                              from "./components/PrivateRoute";
+import { ToastContainer }                        from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../css/app.css';
 
 AuthApi.setup();
@@ -36,6 +38,7 @@ const App = () => {
           </Switch>
         </main>
       </HashRouter>
+      <ToastContainer position="bottom-right"/>
     </AuthContext.Provider>
   );
 };

@@ -4,6 +4,7 @@ import Select                         from '../components/forms/Select';
 import CustomersApi                   from '../services/customersApi';
 import InvoicesApi                    from '../services/invoicesApi';
 import axios                          from 'axios';
+import { toast }                      from 'react-toastify';
 
 const InvoicePage = ({history, match}) => {
   const { id = "new" } = match.params;
@@ -34,6 +35,7 @@ const InvoicePage = ({history, match}) => {
       }
     } catch(error) {
       history.replace("/customers");
+      toast.error('Error during customers fetching !');
     }
   };
 
@@ -44,6 +46,7 @@ const InvoicePage = ({history, match}) => {
       setInvoice({ amount, status, customer: customer.id });
     } catch (error) {
       history.replace("/invoices");
+      toast.error('Error during invoices fetching !');
     }
   };
 
@@ -72,8 +75,10 @@ const InvoicePage = ({history, match}) => {
     try {
       if (editing) {
         await InvoicesApi.update(id, invoice);
+        toast.success('Invoice updated!');
       } else {
         await InvoicesApi.add(invoice);
+        toast.success('Invoice created!');
       }
       history.replace("/invoices");
     } catch({ response }) {
@@ -84,6 +89,7 @@ const InvoicePage = ({history, match}) => {
           apiErrors[violation.propertyPath] = violation.message;
         });
         setErrors(apiErrors);
+        toast.error('Error form not submitted !');
       }
     }
   };

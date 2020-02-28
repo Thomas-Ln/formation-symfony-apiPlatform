@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Field                          from '../components/forms/Field';
 import { Link }                       from 'react-router-dom';
 import CustomersApi                   from '../services/customersApi';
+import { toast }                      from 'react-toastify';
 
 const CustomerPage = ({ history, match }) => {
   const { id = "new" } = match.params;
@@ -28,6 +29,7 @@ const CustomerPage = ({ history, match }) => {
       setCustomer({ firstName, lastName, email, company });
     } catch(error) {
       history.replace("/customers");
+      toast.error('Customer not found !');
     }
   };
 
@@ -49,15 +51,17 @@ const CustomerPage = ({ history, match }) => {
   const handleSubmit = async event => {
     event.preventDefault();
     try {
+     setErrors({});
       //edit
       if(editing) {
         await CustomersApi.update(id, customer);
+        toast.success('Customer updated!');
       } else {
       //add
         await CustomersApi.add(customer);
+        toast.success('Customer created!');
         history.replace("/customers");
       }
-     setErrors({});
     } catch({ response }) {
       const { violations } = response.data;
       if(violations) {
@@ -66,6 +70,7 @@ const CustomerPage = ({ history, match }) => {
           apiErrors[violation.propertyPath] = violation.message;
         });
         setErrors(apiErrors);
+        toast.error('Error form not submitted !');
       }
     }
   };

@@ -2,19 +2,23 @@ import React, { useEffect, useState } from "react";
 import Pagination                     from "../components/Pagination";
 import CustomersApi                   from "../services/customersApi";
 import { Link }                       from "react-router-dom";
+import { toast }                      from 'react-toastify';
+import TableLoader                    from "../components/loaders/TableLoader";
 
 const CustomersPage = () => {
   const [customers, setCustomers]     = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch]           = useState("");
+  const [loading, setLoading]         = useState(true);
 
   // retrieve customers
   const fetchCustomers = async () => {
     try {
         const data = await CustomersApi.findAll();
         setCustomers(data);
+        setLoading(false);
     } catch (error) {
-        console.log(error.response);
+        toast.error('Error during customers fetching !');
     }
   };
 
@@ -28,8 +32,10 @@ const CustomersPage = () => {
     const originalCustomers = [...customers];
     setCustomers(customers.filter(customer => customer.id !== id));
     try {
-        await CustomersApi.delete(id)
+        await CustomersApi.delete(id);
+        toast.success('Sustomer deleted !');
     } catch(error) {
+        toast.error('Error');
         setCustomers(originalCustomers);
     }
   };
@@ -90,12 +96,13 @@ const CustomersPage = () => {
       </tr>
     </thead>
 
+    {!loading && (
     <tbody>
       {paginatedCustomers.map(customer =>
       <tr key={customer.id}>
         <td>{customer.id}</td>
         <td>
-          <a href="#"> {customer.firstName} {customer.lastName}</a>
+          {customer.firstName} {customer.lastName}
         </td>
         <td>{customer.email}</td>
         <td>{customer.company}</td>
@@ -103,6 +110,12 @@ const CustomersPage = () => {
           <span className="badge p-2 badge-info text-center">{customer.invoices.length}</span>
         </td>
         <td className="text-center">{customer.totalAmount.toLocaleString()}</td>
+        <Link
+          to={"/customers/" + customer.id}
+          className="btn btn-info btn-sm mr-2"
+        >
+          Edit
+        </Link>
         <td>
           <button
               onClick={() => handleDelete(customer.id)}
@@ -115,7 +128,10 @@ const CustomersPage = () => {
       </tr>
       )}
     </tbody>
+    )}
     </table>
+
+    {loading && <TableLoader/>}
 
     {itemsPerPage < filteredCustomers.length && (
       <Pagination

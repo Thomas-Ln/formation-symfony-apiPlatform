@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Field               from '../components/forms/Field';
 import axios               from 'axios';
+import { toast }           from 'react-toastify';
 
 const RegisterPage = ({ history }) => {
   const [user, setUser] = useState({
@@ -38,6 +39,7 @@ const RegisterPage = ({ history }) => {
 
     try {
       const response = await axios.post("http://localhost:8000/api/users", user);
+      toast.success("Registration validated !");
       history.replace("/login");
       setErrors({});
     } catch(error) {
@@ -48,6 +50,7 @@ const RegisterPage = ({ history }) => {
         });
         setErrors(apiErrors);
       }
+      toast.error("Registration failed !");
     }
   };
 

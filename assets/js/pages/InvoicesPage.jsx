@@ -3,6 +3,7 @@ import Pagination                     from "../components/Pagination";
 import InvoicesApi                    from "../services/invoicesApi";
 import moment                         from "moment";
 import { Link }                       from "react-router-dom";
+import { toast }                      from 'react-toastify';
 
 const STATUS_CLASSES = {
   PAID: "success",
@@ -27,7 +28,7 @@ const InvoicesPage = () => {
       const data = await InvoicesApi.findAll();
       setInvoices(data);
     } catch (error) {
-      console.log(error.response);
+        toast.error('Error during invoices fetching !');
     }
   };
 
@@ -46,9 +47,11 @@ const InvoicesPage = () => {
     const originalInvoices = [...invoices];
     setInvoices(invoices.filter(invoice => invoice.id !== id));
     try {
-      await InvoicesApi.delete(id)
+      await InvoicesApi.delete(id);
+      toast.success('Invoice deleted !');
     } catch (error) {
       setInvoices(originalInvoices);
+      toast.error('Error');
     }
   };
 
@@ -116,7 +119,7 @@ const InvoicesPage = () => {
         {invoice.chrono}
       </td>
       <td>
-      <a href="#"> {invoice.customer.firstName} {invoice.customer.lastName}</a>
+      {invoice.customer.firstName} {invoice.customer.lastName}
       </td>
       <td className="text-center">
         {formatDate(invoice.sentAt)}
