@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios             from "axios";
+import Cache             from "./cache";
+import { CUSTOMERS_API } from "../config";
 
 function find(id) {
   return axios
@@ -6,23 +8,43 @@ function find(id) {
     .then(response => response.data);
 }
 
-function findAll() {
+async function findAll() {
+  const cachedCustomers = await Cache.get("customers");
+  if (cachedCustomers) return cachedCustomers;
+
   return axios
-    .get("http://localhost:8000/api/customers")
-    .then(response => response.data['hydra:member']);
+    .get(CUSTOMERS_API)
+    .then(response => {
+      const customers = response.data['hydra:member'];
+      Cache.set("customers", customers);
+      return customers;
+    });
 }
 
 function addCustomer(customer) {
-  return axios.post("http://localhost:8000/api/customers", customer);
+  return axios.post(CUSTOMERS_API, customer)
+  .then(response => {
+      Cache.invalidate("customers");
+      return response;
+    });
 }
 
 function updateCustomer(id, customer) {
-  return axios.put("http://localhost:8000/api/customers/" + id, customer);
+  return axios
+    .put(CUSTOMERS_API + "/" + id, customer)
+    .then(response => {
+      Cache.invalidate("customers");
+      return response;
+    });
 }
 
 function deleteCustomer(id) {
   return axios
-    .delete("http://localhost:8000/api/customers/" + id);
+    .delete(CUSTOMERS_API + "/" + id)
+    .then(response => {
+      Cache.invalidate("customers");
+      return response;
+    });
 }
 
 export default {

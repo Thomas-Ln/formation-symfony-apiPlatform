@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Field               from '../components/forms/Field';
 import axios               from 'axios';
 import { toast }           from 'react-toastify';
+import { USERS_API }       from '../config';
 
 const RegisterPage = ({ history }) => {
   const [user, setUser] = useState({
@@ -38,7 +39,7 @@ const RegisterPage = ({ history }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/api/users", user);
+      const response = await axios.post(USERS_API, user);
       toast.success("Registration validated !");
       history.replace("/login");
       setErrors({});
